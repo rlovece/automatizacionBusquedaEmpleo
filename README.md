@@ -162,10 +162,14 @@ docker compose down       # lo para; los datos quedan en el volumen de Docker
 
 ## Costo
 
+Precios de la [tabla de la API de Gemini](https://ai.google.dev/gemini-api/docs/pricing), leída el 05/10/2026 (actualizada por Google el 01/10/2026). Cambian seguido: conviene mirarla antes de decidir.
+
 - **n8n**: gratis si es autoalojado; n8n Cloud tiene abono mensual.
-- **Gemini, nivel gratuito**: no se paga. Tiene límites de pedidos por día y por minuto, y **Google usa lo que se manda** (ver "Datos personales"). Según la tabla de precios de Google, la búsqueda en Google sólo es gratis en este nivel con `gemini-2.5-flash` y `gemini-2.5-flash-lite`, hasta 500 pedidos por día. Este dato viene de un resumen de la página, no del texto literal, así que hay que confirmarlo en AI Studio.
-- **Uso esperado**: 3 búsquedas web por día, más un pedido por cada mail de alertas nuevo y por cada listado web. Son unos 10 a 15 pedidos por día, en general dentro del nivel gratuito. Para no pasar el límite por minuto, los nodos de Gemini mandan un pedido cada 10 segundos y reintentan si la API responde que se pasó.
-- **Si se pasa al nivel pago**, activando la facturación en AI Studio: el flujo no cambia y los datos dejan de usarse para mejorar productos de Google. Según la misma tabla, con los modelos Gemini 3 las primeras 5.000 búsquedas en Google por mes no se cobran. Con este volumen, el costo sería bajo, pero hay que confirmarlo con la tabla vigente.
+- **Leer y puntuar** (`gemini-3.5-flash`): gratis en el nivel gratuito, con límites de pedidos por día y por minuto, y **Google usa lo que se manda** (ver "Datos personales"). En el nivel pago, USD 1,50 por millón de tokens de entrada y USD 9 por millón de salida.
+- **La búsqueda web** (`gemini-3.8-flash` con búsqueda en Google): según la tabla, **la búsqueda en Google no está disponible en el nivel gratuito** con este modelo. Hace falta una clave con la facturación activada. En el nivel pago, las primeras 5.000 búsquedas por mes no se cobran (el cupo se comparte entre los modelos Gemini 3) y después cuestan USD 14 cada 1.000. Se cuenta cada búsqueda que hace el modelo, no cada pedido: un pedido puede hacer varias. Los tokens cuestan USD 0,75 por millón de entrada y USD 3,75 de salida hasta el 31/12/2026, y el doble desde el 01/01/2027.
+- **Uso esperado**: 2 búsquedas web por día, más un pedido por cada mail de alertas nuevo y por cada listado web. Son unos 10 a 15 pedidos por día. Con 2 corridas diarias, el cupo de 5.000 búsquedas alcanza mientras cada corrida haga menos de unas 80. Para no pasar el límite por minuto, los nodos de Gemini mandan un pedido cada 10 segundos y reintentan si la API responde que se pasó.
+- **Sin facturación**, queda apagar la búsqueda web (`busqueda_web.horas: []`) y usar sólo las alertas por mail, que es la fuente principal.
+- **Con facturación activada**, el flujo no cambia y los datos dejan de usarse para mejorar productos de Google. Con este volumen el costo es bajo, pero depende de cuánto lea el modelo en cada búsqueda: conviene mirar el consumo en AI Studio la primera semana.
 
 ## Datos personales
 
@@ -212,3 +216,7 @@ Con `'borrador'` el mail queda en Borradores de su Gmail y lo envía la persona 
 **El orden importa:** la rama de postulaciones está más arriba en el lienzo que "Sólo si hay algo para mandar". Con `executionOrder: v1`, n8n la corre primero, y así "Completar resumen" ya sabe cómo salió cada envío. Si se mueven los nodos, mantener ese orden.
 
 **Pendiente:** algunas oficinas de empleo piden datos extra en el asunto, como un número de pedido. La plantilla todavía no lo contempla.
+
+## Licencia
+
+MIT. Ver `LICENSE`.

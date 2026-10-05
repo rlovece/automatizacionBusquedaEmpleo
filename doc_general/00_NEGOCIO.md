@@ -121,13 +121,14 @@ Algunos avisos (clasificados, el municipio, bolsas de escuelas técnicas y gremi
 | Concepto | Costo |
 |---|---|
 | n8n autoalojado en Docker | Gratis |
-| Gemini, nivel gratuito | Gratis, con límites de pedidos por día y por minuto |
+| Gemini, leer y puntuar, nivel gratuito | Gratis, con límites de pedidos por día y por minuto |
+| Gemini, búsqueda web | Necesita una clave con facturación: las primeras 5.000 búsquedas en Google por mes no se cobran, y después USD 14 cada 1.000 |
 | Uso esperado | Unos 10 a 15 pedidos por día, en general dentro del nivel gratuito |
 | Gmail, Sheets y el cliente OAuth de Google Cloud | Gratis |
 
 **El costo real es otro:** mientras corre en esta computadora, tiene que estar prendida con Docker abierto. Para no depender de eso, el mismo `docker-compose.yml` sirve en un servidor.
 
-⚠️ El costo de la búsqueda en Google con el modelo actual de la búsqueda web (`gemini-3.8-flash`) **no está confirmado**: el modelo original dejó de estar disponible para cuentas nuevas el 28/09/2026. Hay que mirarlo en AI Studio.
+Los precios son de la tabla de la API de Gemini al 05/10/2026; el detalle y el link están en la sección "Costo" del `README.md`. Según esa tabla, la búsqueda en Google no está disponible en el nivel gratuito con el modelo actual (`gemini-3.8-flash`).
 
 ---
 

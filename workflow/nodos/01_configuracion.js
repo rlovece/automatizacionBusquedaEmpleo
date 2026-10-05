@@ -161,7 +161,9 @@ return [{
     // Búsqueda web con Google Search y lectura de páginas (URL context).
     // Las horas tienen que coincidir con las del disparador: 7, 10, 13, 16, 19 y 22.
     // gemini-2.5-flash ya no está disponible para cuentas nuevas (la API responde 404 y sugiere
-    // gemini-3.8-flash, 28/09/2026). Confirmar en AI Studio cuánto cuesta la búsqueda en Google con este modelo.
+    // gemini-3.8-flash, 28/09/2026). Según la tabla de precios al 05/10/2026, con este modelo la búsqueda en Google
+    // pide una clave con facturación: 5.000 búsquedas por mes sin cargo y después USD 14 cada 1.000 (ver README).
+    // Para no usar la búsqueda web, dejar horas en [].
     busqueda_web: {
       horas: [7, 16],
       modelo: 'gemini-3.8-flash',
