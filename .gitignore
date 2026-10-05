@@ -1,7 +1,11 @@
 # Datos de la persona: CV, foto, perfil, configuración real y notas.
-# Viven sólo en esta computadora.
+# Viven sólo en esta computadora. Las plantillas y los LEEME sí van.
 perfil/*
 !perfil/LEEME.md
+!perfil/configuracion_persona.ejemplo.js
+!perfil/cv/
+perfil/cv/*
+!perfil/cv/LEEME.md
 
 # Se genera con herramientas/armar_workflow.mjs y lleva los datos de perfil/configuracion_persona.js.
 workflow/busqueda_empleo_ultimo_clic.json

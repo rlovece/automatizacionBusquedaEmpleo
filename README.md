@@ -56,7 +56,8 @@ Cada 3 horas (7, 10, 13, 16, 19 y 22)
 | `herramientas/armar_workflow.mjs` | Arma el JSON a partir de `nodos/`, con los datos de `perfil/configuracion_persona.js` |
 | `herramientas/probar_nodos.mjs` | Prueba los nodos con datos simulados y la persona de ejemplo, sin n8n ni API |
 | `n8n/` | `docker-compose.yml` para levantar n8n y `.env` con su clave de cifrado (no va al repo; la plantilla es `.env.example`) |
-| `perfil/` | Los CV, la configuración real y las notas de la persona (ver "Datos personales" y `perfil/LEEME.md`). No va al repo |
+| `perfil/` | Los CV, la configuración real y las notas de la persona (ver "Datos personales" y `perfil/LEEME.md`). No va al repo, salvo las plantillas |
+| `perfil/configuracion_persona.ejemplo.js` | La plantilla de los datos de la persona, con una persona inventada. Se copia como `configuracion_persona.js` |
 
 Después de cambiar algo en `nodos/`:
 
@@ -66,6 +67,20 @@ node herramientas/probar_nodos.mjs
 ```
 
 Una vez importado, n8n pasa a ser la fuente de verdad: si se edita la configuración en la interfaz de n8n, hay que copiarla de vuelta a `01_configuracion.js` o, si es un dato de la persona (perfil, CV, localidad, páginas, mail, datos a ocultar, firma), a `perfil/configuracion_persona.js`. Si no, ese cambio se pierde en la próxima importación.
+
+## Para empezar
+
+Hace falta Docker, Node.js 18 o más nuevo, una cuenta de Gmail, una Google Sheet y una clave de la API de Gemini.
+
+```
+cp n8n/.env.example n8n/.env                                          # y completar N8N_ENCRYPTION_KEY
+cp perfil/configuracion_persona.ejemplo.js perfil/configuracion_persona.js   # y completar con la persona real
+node herramientas/armar_workflow.mjs                                  # genera el workflow
+node herramientas/probar_nodos.mjs                                    # prueba los nodos, sin n8n ni API
+cd n8n && docker compose up -d                                        # n8n en http://localhost:5678
+```
+
+Sin `perfil/configuracion_persona.js` todo funciona con la persona de ejemplo, que alcanza para mirar el flujo y correr las pruebas. Los pasos completos están abajo.
 
 ## Puesta en marcha
 
@@ -88,7 +103,7 @@ Crear una Google Sheet con tres pestañas, con estos nombres exactos:
 
 En Google AI Studio (aistudio.google.com), crear una clave de API. En la página de límites (aistudio.google.com/rate-limit) confirmar que los dos modelos de la Configuración estén disponibles en el nivel gratuito, y cuántos pedidos por día y por minuto permiten:
 
-- `gemini-2.5-flash` para la búsqueda web;
+- `gemini-3.8-flash` para la búsqueda web (`gemini-2.5-flash` dejó de estar disponible para cuentas nuevas en septiembre de 2026);
 - `gemini-3.5-flash` para leer y puntuar.
 
 Si alguno ya no está, se cambia por otro de la misma familia en la Configuración.
@@ -107,7 +122,7 @@ docker compose down       # lo para; los datos quedan en el volumen de Docker
 - `n8n/.env` tiene la clave con la que n8n cifra las credenciales. **No se sube a ningún repo.** Para migrar a un servidor, hay que copiarlo tal cual; si se pierde, se vuelven a cargar las credenciales.
 - Los workflows, las credenciales y las ejecuciones viven en el volumen `n8n_n8n_empleo_datos` de Docker, no en la carpeta del proyecto.
 - **Mientras corre acá, la computadora tiene que estar prendida con Docker Desktop abierto.** Si está apagada a la hora de una corrida, esa corrida se pierde. Las alertas no: las lee la corrida siguiente, porque se buscan las de los últimos 3 días.
-- El workflow ya está importado. Para volver a importarlo después de cambiar `nodos/`:
+- Para importar el workflow desde la línea de comandos, la primera vez y después de cambiar `nodos/`:
 
   ```
   node herramientas/armar_workflow.mjs
@@ -143,7 +158,7 @@ docker compose down       # lo para; los datos quedan en el volumen de Docker
 3. Revisar el mail, la hoja y, en la ejecución de n8n, qué devolvió "Gemini: buscar en la web" y qué le llegó a "Gemini: leer y puntuar". ¿Los avisos son de la zona y recientes? ¿Los puntajes tienen sentido? ¿El CV sugerido es el correcto? ¿Quedó algún dato de la persona sin tapar? Ajustar el perfil, las páginas, `umbral`, `datos_a_ocultar` o las instrucciones hasta que acierte.
 4. Volver `busqueda_web.horas` a `[7, 16]`, poner el mail de la persona y activar el workflow.
 
-**Esto no se probó todavía contra la API real ni en una instancia de n8n.** La API de Gemini que se usa, la Interactions API, es la que muestra hoy la documentación de Google, pero los pasos de la respuesta (`steps`, `model_output`) están armados a partir de los ejemplos de esa documentación. Si en la primera corrida "Leer respuesta" dice que la respuesta no tiene texto, hay que mirar la respuesta cruda en n8n y ajustar la función `textoDe` de `03_juntar_fuentes.js` y `05_leer_respuesta.js`. Lo mismo con los nodos de Gmail, Sheets e If: si alguno aparece con un parámetro vacío o en rojo, se completa en la interfaz.
+**Está probado contra la API real, en un n8n autoalojado:** la fase 1 tuvo corridas reales y la fase 2 se probó en modo borrador. Igual, las APIs cambian. Si "Leer respuesta" dice que la respuesta no tiene texto, es que cambió la forma de la respuesta de la Interactions API de Gemini (`steps`, `model_output`): hay que mirar la respuesta cruda en n8n y ajustar la función `textoDe` de `03_juntar_fuentes.js` y `05_leer_respuesta.js`. Lo mismo con los nodos de Gmail, Sheets e If: si alguno aparece con un parámetro vacío o en rojo, se completa en la interfaz.
 
 ## Costo
 
