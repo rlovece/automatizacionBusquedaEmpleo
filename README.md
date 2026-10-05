@@ -216,7 +216,3 @@ Con `'borrador'` el mail queda en Borradores de su Gmail y lo envía la persona 
 **El orden importa:** la rama de postulaciones está más arriba en el lienzo que "Sólo si hay algo para mandar". Con `executionOrder: v1`, n8n la corre primero, y así "Completar resumen" ya sabe cómo salió cada envío. Si se mueven los nodos, mantener ese orden.
 
 **Pendiente:** algunas oficinas de empleo piden datos extra en el asunto, como un número de pedido. La plantilla todavía no lo contempla.
-
-## Licencia
-
-MIT. Ver `LICENSE`.
