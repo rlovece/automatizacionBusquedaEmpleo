@@ -1,0 +1,40 @@
+# n8n para la búsqueda de empleo. Sirve igual en esta computadora y en un servidor.
+#
+#   Levantar:  docker compose up -d        (desde esta carpeta)
+#   Parar:     docker compose down         (los datos quedan en el volumen n8n_empleo_datos)
+#   Abrir:     http://localhost:5678
+#
+# Los workflows, las credenciales y el historial de ejecuciones viven en el volumen de Docker,
+# no en esta carpeta: así un sincronizador de archivos no toca la base de datos mientras n8n la usa.
+
+services:
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:latest
+    container_name: n8n_empleo
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:5678:5678"
+    env_file: .env
+    environment:
+      - GENERIC_TIMEZONE=America/Argentina/Buenos_Aires
+      - TZ=America/Argentina/Buenos_Aires
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - WEBHOOK_URL=http://localhost:5678/
+      - N8N_DIAGNOSTICS_ENABLED=false
+      - N8N_PERSONALIZATION_ENABLED=false
+      # Borra las ejecuciones de más de 30 días para que la base no crezca sin fin.
+      - EXECUTIONS_DATA_PRUNE=true
+      - EXECUTIONS_DATA_MAX_AGE=720
+      # Los nodos de archivo sólo pueden leer los CV (fase 2: postular por mail).
+      - N8N_RESTRICT_FILE_ACCESS_TO=/files/cv
+    volumes:
+      - n8n_empleo_datos:/home/node/.n8n
+      # El workflow generado, de sólo lectura, para importarlo desde la línea de comandos.
+      - ../workflow:/files/workflow:ro
+      # Los CV en PDF, de sólo lectura, para adjuntarlos al postular por mail. No viajan a Gemini.
+      - ../perfil/cv:/files/cv:ro
+
+volumes:
+  n8n_empleo_datos:

@@ -1,0 +1,10 @@
+# Datos de la persona: CV, foto, perfil, configuración real y notas.
+# Viven sólo en esta computadora.
+perfil/*
+!perfil/LEEME.md
+
+# Se genera con herramientas/armar_workflow.mjs y lleva los datos de perfil/configuracion_persona.js.
+workflow/busqueda_empleo_ultimo_clic.json
+
+# La clave con la que n8n cifra las credenciales. La plantilla es n8n/.env.example.
+n8n/.env
